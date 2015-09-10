@@ -80,6 +80,7 @@ module Swagger::Grape
                 path = target.split('__')
                 cursor = find_elem_in_schema(cursor, path.dup)
                 target = path.last
+
               end
 
               target = definition[:as].to_s if definition[:as].present?
@@ -93,13 +94,11 @@ module Swagger::Grape
               if definition[:using].present?
                 #it's either an object or an array of object
                 using = type_convert(definition[:using].to_s, true)
-
-                if cursor['type'].present? && cursor['type'] == 'array'
-                  cursor['items'] = using
+                if definition['type'].present? && definition['type'] == 'array'
+                  cursor['properties'][target]['items'] = using
                 else
                   cursor['properties'][target] = using
                 end
-
               end
 
               cursor['properties'][target]['description'] = definition[:documentation][:desc] if definition[:documentation].present?
